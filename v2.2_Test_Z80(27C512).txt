@@ -1,0 +1,209 @@
+;Ver 2,2 Write BY Imasoft
+;Субота      - c1.0 от‚ 30.09.23, Старт проекта
+;Воскресенье - v1.1 от‚ 01.10.23, Добавил проверку адресных линий CPU Z80, A8,A9,A10,A11,A12,A13,A14,A15
+;Воскресенье - v2.0 от‚ 02.10.23, Исправил ошибки
+;Понедельник - v2.1 от‚ 02.10.23, Немного изменил код dealyx
+;Вторник     - v2.2 от‚ 03.10.23, Добавил реверс бегущего светодиода
+
+
+    org  0
+;-----------------
+    xor a
+    cpl
+    out (#0001),a ; turn on all LEDs
+;-----------------
+    ld b, 255
+    ld c, b
+delay0:
+    dec c
+    jr nz, delay0
+    dec b
+    jr nz, delay0
+    ld b, 255
+    ld c, b
+delay00:
+    dec c
+    jr nz, delay00
+    dec b
+    jr nz, delay00
+;-----------------  
+    xor a
+    out (#0001),a ; turn off all LEDs
+;-----------------   
+    ld b, 255
+    ld c, b
+delay1:
+    dec c
+    jr nz, delay1
+    dec b
+    jr nz, delay1
+;-----------------  
+    defb #ed, #71   ; undocumented "out (c),0" works as out (c), FF on CMOS z80
+;-----------------   
+    ld b, 255
+    ld c, b
+delay2:
+    dec c
+    jr nz, delay2
+    dec b
+    jr nz, delay2
+;-----------------  
+    xor a
+    out (#0001),a ; turn off all LEDs
+;-----------------
+    ld b, 255
+    ld c, b
+delay3:
+    dec c
+    jr nz, delay3
+    dec b
+    jr nz, delay3
+;-----------------
+    jp start
+    defs 196,#ff
+;-----------------
+
+
+
+
+
+;-----------------   
+start:
+    ld l,0
+    ld a, #01
+    out (#0001),a
+;-----------------   
+    ld b, 255
+    ld c, b
+delay4:
+    dec c
+    jr nz, delay4
+    dec b
+    jr nz, delay4
+;-----------------  
+    jp next_512
+    defs 238,#ff
+;-----------------
+next_512:
+    ld a, #02
+    out (#0001),a
+;-----------------   
+    ld b, 255
+    ld c, b
+delay5:
+    dec c
+    jr nz, delay5
+    dec b
+    jr nz, delay5
+;-----------------  
+    ld a,l    
+    or l
+    jp nz,start
+    jp next_1024
+    defs 235+256,#FF
+;-----------------
+next_1024:
+    ld a, #04
+    out (#0001),a
+;-----------------   
+    ld b, 255
+    ld c, b
+delay6:
+    dec c
+    jr nz, delay6
+    dec b
+    jr nz, delay6
+;-----------------   
+    ld a,l    
+    or l
+    jp nz,next_512
+    jp next_2048
+    defs 235+256+512,#ff
+;-----------------
+next_2048:
+    ld a, #08
+    out (#0001),a
+;-----------------   
+    ld b, 255
+    ld c, b
+delay7:
+    dec c
+    jr nz, delay7
+    dec b
+    jr nz, delay7
+;-----------------  
+    ld a,l    
+    or l
+    jp nz,next_1024
+    jp next_4096
+    defs 235+256+512+1024,#ff
+;-----------------
+next_4096:
+    ld a, #10
+    out (#0001),a
+;-----------------   
+    ld b, 255
+    ld c, b
+delay8:
+    dec c
+    jr nz, delay8
+    dec b
+    jr nz, delay8
+;-----------------  
+    ld a,l    
+    or l
+    jp nz,next_2048
+    jp next_8192
+    defs 235+256+512+1024+2048,#ff
+;-----------------
+next_8192:
+    ld a, #20
+    out (#0001),a
+;-----------------   
+    ld b, 255
+    ld c, b
+delay9:
+    dec c
+    jr nz, delay9
+    dec b
+    jr nz, delay9
+;-----------------  
+    ld a,l    
+    or l
+    jp nz,next_4096
+    jp next_16384
+    defs 235+256+512+1024+2048+4096,#ff
+;-----------------
+next_16384:
+    ld a, #40
+    out (#0001),a
+;-----------------   
+    ld b, 255
+    ld c, b
+delay10:
+    dec c
+    jr nz, delay10
+    dec b
+    jr nz, delay10
+;-----------------  
+    ld a,l    
+    or l
+    jp nz,next_8192
+    jp next_32768
+    defs 235+256+512+1024+2048+4096+8192,#ff
+;-----------------
+next_32768:
+    ld a, #80
+    out (#0001),a
+;-----------------   
+    ld b, 255
+    ld c, b
+delay11:
+    dec c
+    jr nz, delay11
+    dec b
+    jr nz, delay11
+;-----------------  
+    ld l,#ff    
+    jp next_16384
+;-----------------  
